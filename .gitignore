@@ -1,0 +1,21 @@
+# Build files
+dist-newstyle/
+*.o
+*.hi
+*.ghc*
+*.stack-work/
+
+# Temporary files
+*.log
+*.aux
+*.dSYM/
+
+# IDE files
+*.hs-boot
+*.hsc
+*.cabal
+*.cabal.project
+
+# Backup files
+*~
+*.bak
