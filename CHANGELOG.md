@@ -1,4 +1,4 @@
-# Revision history for numerical-analysis
+# Revision history for numerical-analysis-lib
 
 ## 0.1.0.0 -- YYYY-mm-dd
 
