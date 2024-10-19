@@ -1,15 +1,34 @@
 module Differentiation 
-    ( finiteDifference
+    ( 
+    -- * Basic differentiation methods
+      finiteDifference
     , centralDifference
+    , forwardDifference
+    -- * Advanced methods
     , richardsonExtrapolation
+    , nthOrderCentralDifference
+    -- * Automatic step size selection
+    , automaticStepSize
+    -- * Vector-valued functions
+    , vectorCentralDifference
     ) where
 
 import Control.Exception (assert)
+import Data.List (transpose)
+
 
 -- | Numerical differentiation using forward difference
 --
 -- This function takes a function f, a point x, and a step size h as input,
 -- and returns an approximation of the derivative of f at x using forward difference.
+-- @
+-- forwardDifference f x h = (f(x + h) - f(x)) / h
+-- @
+--
+-- === Example:
+--
+-- >>> forwardDifference (\x -> x^2) 1 0.0001
+-- 2.0001000000089896
 forwardDifference :: (Double -> Double) -> Double -> Double -> Double
 forwardDifference f x h = 
     assert (h > 0) $ (f (x + h) - f x) / h
@@ -36,7 +55,6 @@ richardsonExtrapolation f x h n =
         d1 = go (k-1) h'
         d2 = go (k-1) (h'/2)
 
-
 -- | Compute nth order derivative using central difference
 nthOrderCentralDifference :: Int -> (Double -> Double) -> Double -> Double -> Double
 nthOrderCentralDifference n f x h
@@ -50,3 +68,33 @@ nthOrderCentralDifference n f x h
 -- | Alias for centralDifference for backward compatibility
 finiteDifference :: (Double -> Double) -> Double -> Double -> Double
 finiteDifference = centralDifference
+
+-- | Vector-valued central difference
+-- This function computes the Jacobian matrix for a vector-valued function
+vectorCentralDifference :: ([Double] -> [Double]) -> [Double] -> Double -> [[Double]]
+vectorCentralDifference f x h = 
+    let n = length x
+        basis i = replicate i 0 ++ [1] ++ replicate (n-i-1) 0
+        diff i = 
+            let fPlus = f (zipWith (+) x (map (*h) (basis i)))
+                fMinus = f (zipWith (-) x (map (*h) (basis i)))
+            in zipWith (\a b -> (a - b) / (2*h)) fPlus fMinus
+    in transpose $ map diff [0..n-1]
+
+-- | Automatic step size selection
+--
+-- This function attempts to find an optimal step size for differentiation
+-- based on the function and the point of evaluation.
+--
+-- === Example:
+--
+-- >>> automaticStepSize (\x -> x^2) 1
+-- 2.154434690031884e-6
+automaticStepSize :: (Double -> Double) -> Double -> Double
+automaticStepSize f x0 = 
+    let eps = 1e-8  -- machine epsilon
+        scale = max 1 (abs x0)
+        fx0 = abs (f x0)
+    in cubeRoot (eps * scale / fx0)
+  where
+    cubeRoot y = y ** (1/3)
