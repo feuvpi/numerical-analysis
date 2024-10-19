@@ -1,20 +1,36 @@
-module Differentiation (finiteDifference) where
+module Differentiation 
+    ( finiteDifference
+    , centralDifference
+    , richardsonExtrapolation
+    ) where
 
--- | Numerical differentiation using finite difference
+-- | Numerical differentiation using forward difference
 --
 -- This function takes a function f, a point x, and a step size h as input,
--- and returns an approximation of the derivative of f at x.
---
--- The input function f should be a function that takes a single number as input and returns a number.
--- The input point x should be a number.
--- The input step size h should be a small positive number.
---
--- The function returns a number representing the approximate value of the derivative.
---
--- Example:
---
--- >>> finiteDifference (\x -> x^2) 1 0.001
--- 2.000001
-finiteDifference :: (Double -> Double) -> Double -> Double -> Double
-finiteDifference f x h = (f (x + h) - f (x - h)) / (2 * h)
+-- and returns an approximation of the derivative of f at x using forward difference.
+forwardDifference :: (Double -> Double) -> Double -> Double -> Double
+forwardDifference f x h = (f (x + h) - f x) / h
 
+-- | Numerical differentiation using central difference
+--
+-- This function takes a function f, a point x, and a step size h as input,
+-- and returns an approximation of the derivative of f at x using central difference.
+centralDifference :: (Double -> Double) -> Double -> Double -> Double
+centralDifference f x h = (f (x + h) - f (x - h)) / (2 * h)
+
+-- | Numerical differentiation using Richardson extrapolation
+--
+-- This function takes a function f, a point x, an initial step size h, and the number of iterations n as input,
+-- and returns an improved approximation of the derivative of f at x using Richardson extrapolation.
+richardsonExtrapolation :: (Double -> Double) -> Double -> Double -> Int -> Double
+richardsonExtrapolation f x h n = go n h
+  where
+    go 1 h' = centralDifference f x h'
+    go k h' = (4 * d2 - d1) / 3
+      where
+        d1 = go (k-1) h'
+        d2 = go (k-1) (h'/2)
+
+-- | Alias for centralDifference for backward compatibility
+finiteDifference :: (Double -> Double) -> Double -> Double -> Double
+finiteDifference = centralDifference
