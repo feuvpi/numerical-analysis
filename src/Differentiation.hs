@@ -71,6 +71,12 @@ finiteDifference = centralDifference
 
 -- | Vector-valued central difference
 -- This function computes the Jacobian matrix for a vector-valued function
+--
+-- === Example:
+--
+-- >>> let f [x, y] = [x^2 + y, x*y]
+-- >>> vectorCentralDifference f [1, 2] 0.0001
+-- [[2.0000000000055511,0.99999999999179465],[2.0000000000248084,1.0000000000248084]]
 vectorCentralDifference :: ([Double] -> [Double]) -> [Double] -> Double -> [[Double]]
 vectorCentralDifference f x h = 
     let n = length x
