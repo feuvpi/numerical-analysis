@@ -1,3 +1,67 @@
+
+## Numerus: Numerical Analysis Library in Haskell
+
+### Overview
+
+Numerus is a comprehensive suite of numerical analysis tools implemented in Haskell. It is designed for use in professional and academic projects requiring robust numerical computation capabilities.
+
+### Features
+
+Numerus currently includes the following modules:
+
+- Differentiation: Numerical methods for computing derivatives
+- Integration: Numerical integration techniques
+- LinearSolver: Solutions for systems of linear equations
+- RootFinding: Algorithms for finding roots of equations
+- SparseMatrix: Efficient handling of sparse matrices
+
+### Installation
+
+Add the following to your package.yaml or .cabal file:
+
+```
+dependencies:
+- numerus
+```
+
+### Usage
+
+Import the desired modules in your Haskell files:
+
+```haskell
+import Numerus.Differentiation
+import Numerus.Integration
+import Numerus.LinearSolver
+import Numerus.RootFinding
+import Numerus.SparseMatrix
+```
+
+For detailed usage instructions, please refer to the documentation of each module.
+
+### Documentation 
+
+Comprehensive documentation is available for each module. Generate the documentation using:
+
+```
+cabal haddock
+```
+
+### Testing
+
+Numerus includes a test suite to ensure reliability. Run the tests using:
+
+```
+cabal test
+```
+
+### Contributing
+
+Contributions to Numerus are welcome. Please adhere to the following guidelines:
+1. Ensure any new code is well-documented and includes appropriate unit tests.
+2. Follow the existing code style and naming conventions.
+3. Submit pull requests for review before merging into the main branch.
+
+
 Based on the provided code, here are some suggestions to make the library professional and ready to ship:
 
 Documentation: Add Haddock comments to explain the purpose and usage of each function. This will make it easier for users to understand how to use the library. You can also consider using a documentation generator like Haddock to create HTML documentation.
