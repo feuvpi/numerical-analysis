@@ -1,4 +1,4 @@
-module SparseMatrix (SparseMatrix, getElem, lookupSparse, updateSparse) where
+module SparseMatrix (SparseMatrix(..), getElem, lookupSparse, updateSparse) where
 
 -- Define a data structure to represent a sparse matrix
 newtype SparseMatrix = SparseMatrix [(Int, Int, Double)] deriving (Show, Eq) -- (row, column, value)
