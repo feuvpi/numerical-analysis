@@ -30,8 +30,9 @@ import Data.List (transpose)
 -- >>> forwardDifference (\x -> x^2) 1 0.0001
 -- 2.0001000000089896
 forwardDifference :: (Double -> Double) -> Double -> Double -> Double
-forwardDifference f x h = 
-    assert (h > 0) $ (f (x + h) - f x) / h
+forwardDifference f x h
+  | h <= 0 = error "forwardDifference: step size must be positive"
+  | otherwise = (f (x + h) - f x) / h
 
 -- | Numerical differentiation using central difference
 --
