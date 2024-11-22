@@ -39,8 +39,10 @@ forwardDifference f x h
 -- This function takes a function f, a point x, and a step size h as input,
 -- and returns an approximation of the derivative of f at x using central difference.
 centralDifference :: (Double -> Double) -> Double -> Double -> Double
-centralDifference f x h = 
-    assert (h > 0) $ (f (x + h) - f (x - h)) / (2 * h)
+centralDifference f x h
+  | h <= 0 = error "centralDifference: step size must be positive"
+  | otherwise = (f (x + h) - f (x - h)) / (2 * h)
+
 
 -- | Numerical differentiation using Richardson extrapolation
 --
