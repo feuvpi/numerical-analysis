@@ -48,15 +48,41 @@ centralDifference f x h
 --
 -- This function takes a function f, a point x, an initial step size h, and the number of iterations n as input,
 -- and returns an improved approximation of the derivative of f at x using Richardson extrapolation.
+-- richardsonExtrapolation :: (Double -> Double) -> Double -> Double -> Int -> Double
+-- richardsonExtrapolation f x h n = 
+--     assert (h > 0 && n > 0) $ go n h
+--   where
+--     go 1 h' = centralDifference f x h'
+--     go k h' = (4 * d2 - d1) / 3
+--       where
+--         d1 = go (k-1) h'
+--         d2 = go (k-1) (h'/2)
+-- Computes the n-th level Richardson extrapolation R(n, h) for central difference
 richardsonExtrapolation :: (Double -> Double) -> Double -> Double -> Int -> Double
-richardsonExtrapolation f x h n = 
-    assert (h > 0 && n > 0) $ go n h
+richardsonExtrapolation f x h n
+  | n <= 0 = error "Richardson extrapolation level must be positive"
+  | otherwise = richardsonStep n h
   where
-    go 1 h' = centralDifference f x h'
-    go k h' = (4 * d2 - d1) / 3
-      where
-        d1 = go (k-1) h'
-        d2 = go (k-1) (h'/2)
+    -- Computes R(k, current_h) - the k-th level extrapolation using step size current_h
+    -- The recursive formula relates R(k, h) to R(k-1, h) and R(k-1, h/2)
+    richardsonStep :: Int -> Double -> Double
+    richardsonStep 1 current_h = centralDifference f x current_h -- Base case: R(1, h) = Central Difference
+    richardsonStep k current_h =
+         let -- Compute the two results from the previous level (k-1) needed
+             -- for the k-th level calculation based on current_h.
+             -- This computes R(k-1, current_h / 2.0)
+             r_prev_level_half_step = richardsonStep (k-1) (current_h / 2.0)
+             -- This computes R(k-1, current_h)
+             r_prev_level_full_step = richardsonStep (k-1) current_h
+
+             -- The factor comes from the error term ratio: O(h^(2(k-1)))
+             -- Halving the step reduces error by (1/2)^(2(k-1)) = 1 / 4^(k-1)
+             -- So the multiplier p = 4^(k-1)
+             factor = 4.0**(fromIntegral (k-1))
+             
+         -- Apply the formula: R(k,h) = (p * R(k-1, h/2) - R(k-1, h)) / (p - 1)
+         in (factor * r_prev_level_half_step - r_prev_level_full_step) / (factor - 1.0)
+
 
 -- | Compute nth order derivative using central difference
 nthOrderCentralDifference :: Int -> (Double -> Double) -> Double -> Double -> Double
